@@ -9,9 +9,6 @@ import { Request } from 'express';
 import { JwtPayload } from '../types/jwt-payload.type';
 
 type RefreshTokenRequest = Request & {
-  body: {
-    refreshToken?: string;
-  };
   user?: JwtPayload;
 };
 
@@ -21,9 +18,10 @@ export class RefreshTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RefreshTokenRequest>();
-    const refreshToken = request.body.refreshToken;
+    const body = request.body as { refreshToken?: unknown };
+    const refreshToken = body.refreshToken;
 
-    if (!refreshToken) {
+    if (typeof refreshToken !== 'string') {
       throw new UnauthorizedException('Missing refresh token');
     }
 

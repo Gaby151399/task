@@ -35,10 +35,7 @@ export class AuthController {
     @Req() request: AuthenticatedRequest,
     @Body() refreshTokenDto: RefreshTokenDto,
   ) {
-    return this.authService.refreshTokens(
-      request.user.sub,
-      refreshTokenDto,
-    );
+    return this.authService.refreshTokens(request.user.sub, refreshTokenDto);
   }
 
   @UseGuards(JwtAuthGuard)
