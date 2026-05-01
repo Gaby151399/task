@@ -4,21 +4,44 @@
 }
 
 :root {
-  --background: #f5f7fb;
-  --foreground: #16181d;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  
+  --animate-fade-in: fade-in 0.4s ease-out;
+  --animate-slide-up: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   min-height: 100vh;
+  /* Add elegant ambient background pattern */
+  background-image: radial-gradient(at 40% 20%, hsla(220,100%,94%,1) 0px, transparent 50%),
+                    radial-gradient(at 80% 0%, hsla(189,100%,93%,1) 0px, transparent 50%),
+                    radial-gradient(at 0% 50%, hsla(255,100%,96%,1) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 button,
@@ -26,8 +49,32 @@ a,
 input,
 select,
 textarea {
-  transition-duration: 160ms;
-  transition-property: background-color, border-color, color, opacity, box-shadow,
-    transform;
-  transition-timing-function: ease;
+  transition-duration: 200ms;
+  transition-property: background-color, border-color, color, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glassmorphism custom components */
+@layer components {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+  }
+  
+  .glass-header {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  }
 }

@@ -9,20 +9,20 @@ type TaskStatsProps = {
 
 export function TaskStats({ stats }: TaskStatsProps) {
   return (
-    <section className="grid grid-cols-2 gap-3 rounded-lg border border-base-300 bg-base-100 p-4 shadow-sm">
-      <Stat label="Total" value={stats.total} />
-      <Stat label="A faire" value={stats.pending} />
-      <Stat label="En cours" value={stats.progress} />
-      <Stat label="Terminees" value={stats.completed} />
+    <section className="grid grid-cols-2 gap-4">
+      <Stat className="border-t-4 border-t-primary/60 hover:shadow-primary/20" label="Total" value={stats.total} />
+      <Stat className="border-t-4 border-t-warning/60 hover:shadow-warning/20" label="À faire" value={stats.pending} />
+      <Stat className="border-t-4 border-t-info/60 hover:shadow-info/20" label="En cours" value={stats.progress} />
+      <Stat className="border-t-4 border-t-success/60 hover:shadow-success/20" label="Terminées" value={stats.completed} />
     </section>
   );
 }
 
-function Stat({ label, value }: { label: string; value: number }) {
+function Stat({ label, value, className }: { label: string; value: number, className?: string }) {
   return (
-    <div className="rounded-md bg-base-200 p-4">
-      <p className="text-sm text-base-content/60">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
+    <div className={`glass-panel rounded-xl p-5 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 ${className || ""}`}>
+      <p className="text-sm font-medium text-base-content/60 uppercase tracking-wider">{label}</p>
+      <p className="mt-2 text-3xl font-extrabold text-base-content animate-fade-in">{value}</p>
     </div>
   );
 }

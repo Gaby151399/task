@@ -26,76 +26,96 @@ export function AuthCard() {
   };
 
   return (
-    <main className="grid min-h-screen place-items-center px-4 py-10">
-      <section className="w-full max-w-md rounded-lg border border-base-300 bg-base-100 p-6 shadow-sm">
-        <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Nest Tasks
-          </p>
-          <h1 className="mt-2 text-3xl font-bold text-base-content">
-            {mode === "login" ? "Connexion" : "Creer un compte"}
+    <main className="grid min-h-screen place-items-center px-4 py-10 animate-fade-in relative overflow-hidden">
+      {/* Decorative background elements can go here if needed */}
+      <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full mix-blend-multiply pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-secondary/10 blur-[120px] rounded-full mix-blend-multiply pointer-events-none" />
+
+      <section className="glass-card w-full max-w-md rounded-2xl p-8 relative z-10 animate-slide-up">
+        <div className="mb-8 text-center">
+          <div className="bg-primary text-primary-content mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl font-bold shadow-lg animate-float">
+            N
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-base-content">
+            {mode === "login" ? "Bon retour" : "Créer un compte"}
           </h1>
-          <p className="mt-2 text-sm text-base-content/65">
-            Connecte le frontend Next a ton API Nest avec une session JWT.
+          <p className="mt-2 text-sm text-base-content/70">
+            Connectez-vous pour accéder à votre tableau de bord Nest
           </p>
         </div>
 
-        <div className="tabs tabs-box mb-6">
+        <div className="tabs tabs-boxed mb-8 bg-base-100/50 p-1 backdrop-blur-md border border-base-200 shadow-inner rounded-xl w-full grid grid-cols-2">
           <button
-            className={`tab flex-1 ${mode === "login" ? "tab-active" : ""}`}
+            className={`tab rounded-lg h-10 ${
+              mode === "login"
+                ? "bg-white text-primary font-semibold shadow-sm"
+                : "text-base-content/60 hover:text-base-content"
+            }`}
             onClick={() => setMode("login")}
             type="button"
           >
-            Login
+            Connexion
           </button>
           <button
-            className={`tab flex-1 ${mode === "register" ? "tab-active" : ""}`}
+            className={`tab rounded-lg h-10 ${
+              mode === "register"
+                ? "bg-white text-primary font-semibold shadow-sm"
+                : "text-base-content/60 hover:text-base-content"
+            }`}
             onClick={() => setMode("register")}
             type="button"
           >
-            Register
+            Inscription
           </button>
         </div>
 
-        <form className="space-y-4" onSubmit={submitForm}>
-          {mode === "register" ? (
-            <label className="form-control">
-              <span className="label-text mb-2">Nom</span>
+        <form className="space-y-5" onSubmit={submitForm}>
+          {mode === "register" && (
+            <div className="form-control animate-fade-in">
+              <label className="label">
+                <span className="label-text font-medium">Nom complet</span>
+              </label>
               <input
-                className="input input-bordered"
+                className="input input-bordered w-full bg-white/60 focus:bg-white focus:ring-2 focus:ring-primary/30 transition-all border-base-200"
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
                     name: event.target.value,
                   }))
                 }
+                placeholder="Jean Dupont"
                 required
                 type="text"
                 value={form.name}
               />
-            </label>
-          ) : null}
+            </div>
+          )}
 
-          <label className="form-control">
-            <span className="label-text mb-2">Email</span>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Email</span>
+            </label>
             <input
-              className="input input-bordered"
+              className="input input-bordered w-full bg-white/60 focus:bg-white focus:ring-2 focus:ring-primary/30 transition-all border-base-200"
               onChange={(event) =>
                 setForm((current) => ({
                   ...current,
                   email: event.target.value,
                 }))
               }
+              placeholder="jean@exemple.fr"
               required
               type="email"
               value={form.email}
             />
-          </label>
+          </div>
 
-          <label className="form-control">
-            <span className="label-text mb-2">Mot de passe</span>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Mot de passe</span>
+            </label>
             <input
-              className="input input-bordered"
+              className="input input-bordered w-full bg-white/60 focus:bg-white focus:ring-2 focus:ring-primary/30 transition-all border-base-200"
               minLength={6}
               onChange={(event) =>
                 setForm((current) => ({
@@ -103,28 +123,32 @@ export function AuthCard() {
                   password: event.target.value,
                 }))
               }
+              placeholder="••••••••"
               required
               type="password"
               value={form.password}
             />
-          </label>
+          </div>
 
-          {authMutation.isError ? (
-            <div className="alert alert-error text-sm">
-              {getApiErrorMessage(authMutation.error)}
+          {authMutation.isError && (
+            <div className="alert alert-error text-sm rounded-xl py-2 animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span>{getApiErrorMessage(authMutation.error)}</span>
             </div>
-          ) : null}
+          )}
 
           <button
-            className="btn btn-primary w-full"
+            className="btn btn-primary w-full h-12 rounded-xl mt-2 shadow-lg shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all text-base border-0"
             disabled={authMutation.isPending}
             type="submit"
           >
-            {authMutation.isPending
-              ? "Traitement..."
-              : mode === "login"
-                ? "Se connecter"
-                : "Creer le compte"}
+            {authMutation.isPending ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : mode === "login" ? (
+              "Se connecter"
+            ) : (
+              "Créer le compte"
+            )}
           </button>
         </form>
       </section>
