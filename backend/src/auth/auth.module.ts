@@ -10,6 +10,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
   imports: [DatabaseModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, RefreshTokenGuard],
-  exports: [AuthService, JwtAuthGuard, RefreshTokenGuard],
+  exports: [AuthService, JwtModule, JwtAuthGuard, RefreshTokenGuard],
 })
 export class AuthModule {}
