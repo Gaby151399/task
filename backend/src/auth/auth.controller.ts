@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterAuthDto } from './dto/register-auth.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { JwtPayload } from './types/jwt-payload.type';
+
+type AuthenticatedRequest = Request & {
+  user: JwtPayload;
+};
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('register')
+  register(@Body() registerAuthDto: RegisterAuthDto) {
+    return this.authService.register(registerAuthDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('login')
+  login(@Body() loginAuthDto: LoginAuthDto) {
+    return this.authService.login(loginAuthDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @UseGuards(RefreshTokenGuard)
+  @Post('refresh')
+  refresh(
+    @Req() request: AuthenticatedRequest,
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ) {
+    return this.authService.refreshTokens(
+      request.user.sub,
+      refreshTokenDto,
+    );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  logout(@Req() request: AuthenticatedRequest) {
+    return this.authService.logout(request.user.sub);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  me(@Req() request: AuthenticatedRequest) {
+    return this.authService.getProfile(request.user.sub);
   }
 }
