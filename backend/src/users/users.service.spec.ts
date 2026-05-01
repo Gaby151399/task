@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DatabaseService } from '../database/database.service';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -6,7 +7,22 @@ describe('UsersService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        {
+          provide: DatabaseService,
+          useValue: {
+            user: {
+              findUnique: jest.fn(),
+              findMany: jest.fn(),
+              count: jest.fn(),
+              create: jest.fn(),
+              update: jest.fn(),
+              delete: jest.fn(),
+            },
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
