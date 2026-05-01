@@ -7,14 +7,21 @@ import {
   Param,
   Delete,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { TaskStatus } from '@prisma/client';
+import { Request } from 'express';
+import { JwtPayload } from '../auth/types/jwt-payload.type';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
+type AuthenticatedRequest = Request & {
+  user: JwtPayload;
+};
 
 @ApiTags('tasks')
 @ApiBearerAuth()
@@ -24,8 +31,11 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  create(
+    @Req() request: AuthenticatedRequest,
+    @Body() createTaskDto: CreateTaskDto,
+  ) {
+    return this.tasksService.create(createTaskDto, request.user.sub);
   }
 
   @ApiQuery({ name: 'status', required: false, enum: TaskStatus })

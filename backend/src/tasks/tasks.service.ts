@@ -21,17 +21,20 @@ type FindAllTasksQuery = {
 export class TasksService {
   constructor(private readonly database: DatabaseService) {}
 
-  async create(createTaskDto: CreateTaskDto) {
+  async create(createTaskDto: CreateTaskDto, userId: number) {
     const user = await this.database.user.findUnique({
-      where: { id: createTaskDto.userId },
+      where: { id: userId },
     });
 
     if (!user) {
-      throw new NotFoundException(`User #${createTaskDto.userId} not found`);
+      throw new NotFoundException(`User #${userId} not found`);
     }
 
     return this.database.task.create({
-      data: createTaskDto,
+      data: {
+        ...createTaskDto,
+        userId,
+      },
       include: {
         user: {
           select: {
@@ -135,16 +138,6 @@ export class TasksService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
     await this.findOne(id);
-
-    if (updateTaskDto.userId) {
-      const user = await this.database.user.findUnique({
-        where: { id: updateTaskDto.userId },
-      });
-
-      if (!user) {
-        throw new NotFoundException(`User #${updateTaskDto.userId} not found`);
-      }
-    }
 
     return this.database.task.update({
       where: { id },
